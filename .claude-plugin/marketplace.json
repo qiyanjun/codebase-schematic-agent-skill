@@ -2,12 +2,12 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "codebase-schematic",
   "description": "Generates a PNG architecture-overview diagram for a codebase.",
-  "owner": { "name": "Yanjun Qi / Jane" },
+  "owner": { "name": "Yanjun Qi" },
   "plugins": [
     {
       "name": "codebase-schematic",
       "description": "Generates a PNG architecture-overview diagram for a codebase: one schematic showing the single structural fact most worth understanding about how it fits together.",
-      "author": { "name": "Yanjun Qi / Jane" },
+      "author": { "name": "Yanjun Qi" },
       "source": "./"
     }
   ]
