@@ -23,8 +23,10 @@ jobs:
       - name: Render the example diagram
         working-directory: skills/codebase-schematic/references
         run: |
-          uv run python render_excalidraw.py ../../../examples/self/codebase-schematic.excalidraw --output /tmp/rendered.png
-      - name: Verify the render matches the committed PNG
+          uv run python render_excalidraw.py ../../../examples/self/codebase-schematic.excalidraw --output /tmp/rendered.png --svg-output /tmp/rendered.svg
+      - name: Verify the exported SVG matches the committed SVG exactly
+        run: cmp /tmp/rendered.svg examples/self/codebase-schematic.svg
+      - name: Sanity-check the PNG against the committed PNG
         run: |
           uv run --with pillow python tests/compare_render.py /tmp/rendered.png examples/self/codebase-schematic.png
       - name: Upload the render for inspection
@@ -32,5 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rendered-example
-          path: /tmp/rendered.png
+          path: |
+            /tmp/rendered.png
+            /tmp/rendered.svg
           if-no-files-found: ignore

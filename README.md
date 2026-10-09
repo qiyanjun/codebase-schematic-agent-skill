@@ -224,7 +224,13 @@ path before (a 404 on an unrelated sub-path deep in the bundle), discovered
 the hard way while building this skill. CI (`.github/workflows/validate.yml`)
 runs this check plus a full render smoke test — an actual Playwright render
 of `examples/self/`'s diagram — on every push, so a future breakage like
-that one gets caught automatically instead of by hand.
+that one gets caught automatically instead of by hand. The smoke test compares
+the exported SVG byte for byte with `examples/self/codebase-schematic.svg`
+(it embeds its fonts, so it is the same on every platform) and checks the PNG
+only loosely (`tests/compare_render.py`: same size, under 3% of pixels
+different), because Linux rasterises the text differently from macOS. After
+changing the example or the renderer, regenerate both files with
+`--output ../../../examples/self/codebase-schematic.png --svg-output ../../../examples/self/codebase-schematic.svg`.
 
 ### Routing evals
 

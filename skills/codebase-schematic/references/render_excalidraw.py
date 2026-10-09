@@ -74,8 +74,14 @@ def render(
     excalidraw_path: Path,
     output_path: Path | None = None,
     scale: int = 2,
+    svg_output_path: Path | None = None,
 ) -> Path:
-    """Render an .excalidraw file to PNG. Returns the output PNG path."""
+    """Render an .excalidraw file to PNG. Returns the output PNG path.
+
+    If svg_output_path is given, the SVG that Excalidraw exported (before the
+    screenshot) is saved there too. Unlike the PNG, it does not depend on the
+    platform's font rasterisation, so CI can compare it exactly.
+    """
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -149,6 +155,8 @@ def render(
             browser.close()
             sys.exit(1)
 
+        if svg_output_path is not None:
+            svg_output_path.write_text(svg.evaluate("el => el.outerHTML"), encoding="utf-8")
         svg.screenshot(path=str(output_path))
         browser.close()
 
@@ -166,13 +174,17 @@ def main() -> None:
         "--scale", "-s", type=int, default=2,
         help="device scale factor (default: 2)",
     )
+    parser.add_argument(
+        "--svg-output", type=Path, default=None,
+        help="also save the exported SVG here (platform-independent, used by CI)",
+    )
     args = parser.parse_args()
 
     if not args.input.exists():
         print(f"ERROR: file not found: {args.input}", file=sys.stderr)
         sys.exit(1)
 
-    png_path = render(args.input, args.output, args.scale)
+    png_path = render(args.input, args.output, args.scale, args.svg_output)
     print(str(png_path))
 
 
