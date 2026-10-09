@@ -125,8 +125,7 @@ building this skill, not by that repo's text or code.
 ### As a plugin
 
 ```bash
-git clone https://github.com/qiyanjun/codebase-schematic.git
-claude plugin marketplace add ./codebase-schematic
+claude plugin marketplace add qiyanjun/codebase-schematic-agent-skill
 claude plugin install codebase-schematic@codebase-schematic
 ```
 
