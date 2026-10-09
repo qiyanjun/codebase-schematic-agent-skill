@@ -21,7 +21,9 @@ plugins[0].source ("./" = the repo root). Checks:
      skills/*/scripts/) compiles, and every .sh file passes `bash -n`
   6. render_template.html does not import the esm.sh bundle with `?bundle` —
      that query param produced a broken transitive dependency path when
-     tested directly (see docs/superpowers/specs/2026-09-10-codebase-schematic-design.md)
+     tested directly (see docs/superpowers/specs/2026-09-10-codebase-schematic-design.md),
+     and pins an exact @excalidraw/excalidraw version, so a new upstream
+     release cannot change or break rendering
   7. every arrow element in every examples/*.excalidraw file has at most one
      non-null arrowhead — dependency arrows must be one-directional, per
      SKILL.md / design-methodology.md / element-templates.md / README.md
@@ -187,7 +189,14 @@ def check_render_template(errors: list, plugin: str) -> None:
     if not os.path.exists(render_template):
         errors.append(f"missing {rel(render_template)}")
         return
-    if "?bundle" in open(render_template, encoding="utf-8").read():
+    text = open(render_template, encoding="utf-8").read()
+    if not re.search(r"esm\.sh/@excalidraw/excalidraw@\d+\.\d+\.\d+", text):
+        errors.append(
+            "render_template.html does not pin an exact @excalidraw/excalidraw "
+            "version (e.g. @0.18.0) — an unpinned import follows whatever "
+            "esm.sh serves as latest, which has broken rendering before."
+        )
+    if "?bundle" in text:
         errors.append(
             "render_template.html imports the esm.sh bundle with '?bundle' — "
             "this query param has produced a broken transitive dependency path "
