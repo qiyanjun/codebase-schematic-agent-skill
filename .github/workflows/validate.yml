@@ -26,4 +26,11 @@ jobs:
           uv run python render_excalidraw.py ../../../examples/self/codebase-schematic.excalidraw --output /tmp/rendered.png
       - name: Verify the render matches the committed PNG
         run: |
-          diff <(sha256sum /tmp/rendered.png | cut -d' ' -f1) <(sha256sum examples/self/codebase-schematic.png | cut -d' ' -f1)
+          uv run --with pillow python tests/compare_render.py /tmp/rendered.png examples/self/codebase-schematic.png
+      - name: Upload the render for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-example
+          path: /tmp/rendered.png
+          if-no-files-found: ignore
